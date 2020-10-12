@@ -1,0 +1,26 @@
+#! /bin/sh
+#
+# gen_dev dev4 vars.src vars
+#
+# Generate an overlay config for devNNN or dev_swcNNN from vars.src and write to vars
+#
+NAME=$(echo $1 | sed -e "s/_swc//")
+TEMPLATE=$2
+VARFILE=$3
+
+
+NODE="$NAME@127.0.0.1"
+NUMBER=${NAME##dev}
+BASE=$((10000 + 50 * $NUMBER))
+MQTTPORT=$(($BASE + 3))
+MQTTWSPORT=$(($BASE + 4))
+CLUSTERPORT=$(($BASE + 10))
+METRICSPORT=$(($BASE + 20))
+
+
+echo "Generating $NAME - node='$NODE' mqttport=$MQTTPORT mqttwsport=$MQTTWSPORT"
+sed -e "s/@NODE@/$NODE/" \
+    -e "s/@MQTTPORT@/$MQTTPORT/" \
+    -e "s/@MQTTWSPORT@/$MQTTWSPORT/" \
+    -e "s/@CLUSTERPORT@/$CLUSTERPORT/" \
+    -e "s/@METRICSPORT@/$METRICSPORT/" < $TEMPLATE > $VARFILE
